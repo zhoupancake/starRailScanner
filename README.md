@@ -218,3 +218,5 @@ conda install --yes --file requirements.txt
 [@椰羊CoCoGoat](https://github.com/YuehaiTeam/cocogoat)
 
 [@HertaSpace](https://github.com/YuehaiTeam/herta.space)
+
+[@tesseract](https://github.com/tesseract-ocr/tesseract)
