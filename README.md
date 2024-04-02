@@ -150,13 +150,13 @@ conda install --yes --file requirements.txt
 
 脚本运行结束将产生下图中的提示：
 
-![finishDemo](.\docs\finishDemo.png)
+![finishDemo](docs\finishDemo.png)
 
 脚本运行将生成对应的截图（若将参数save_img设置为Ture）与achievements.xlsx文件。
 
 - 截图文件将以自然数顺序在对应的文件夹中命名并保存为.png格式，如下图所示：
 
-  ![screenshotDemo](.\docs\screenshotDemo.png)
+  ![screenshotDemo](docs\screenshotDemo.png)
 
 - achievements.xlsx将保存按照中文成就集名字命名的工作表，工作表存在两种：
 
