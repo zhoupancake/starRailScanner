@@ -1,5 +1,5 @@
 import os
-from config import *
+import config
 import pytesseract as pt
 try:
     from PIL import Image, ImageChops
@@ -7,8 +7,8 @@ except ImportError:
     import Image
 
 def configuration():
-    os.environ['TESSDATA_PREFIX'] = TESSDATA_PREFIX
-    pt.pytesseract.tesseract_cmd = TESSDATA_PATH
+    os.environ['TESSDATA_PREFIX'] = config.TESSDATA_PREFIX
+    pt.pytesseract.tesseract_cmd = config.TESSDATA_PATH
 
 def getString(path="./imgs/temp/temp.jpg", img=None):
     if os.environ.get("TESSDATA_PREFIX") is None:

@@ -4,8 +4,9 @@ import random
 import cv2 as cv
 import pyautogui as pi
 from fuzzywuzzy import process as pr
+from tkinter import messagebox
 
-from config import *
+import config
 from ocr import getString
 from operation import screenshot, moveMouseToCenter, scroll, locationCalculate
 from selector import select
@@ -78,6 +79,8 @@ def process(title, df):
     unmatchedList = []
     data = []
     while True:
+        interruptHandler()
+
         finishScreenshot = False
         moveMouseToCenter()
         pi.click()
@@ -87,10 +90,12 @@ def process(title, df):
         # print(imgs.__len__())
         if data.__len__() > 60 and imgs.__len__() < 5:
             moveMouseToCenter()
-            scroll(0, 4)
+            scroll(2)
             continue
         # print("select finished")
         for img in imgs:
+            interruptHandler()
+
             name = characterSegment(path=None, img=img)
             if name in data:
                 print("reading achievements finished")
@@ -108,7 +113,7 @@ def process(title, df):
             break
         moveMouseToCenter()
         pi.click()
-        scroll(data.__len__())
+        scroll(1)
     return unmatchedList, df
 
 # def fuzzy_merge(df1, df2, left_on, right_on, threshold=60):
@@ -146,17 +151,18 @@ def fuzzy_merge_custom(df, target_string, modify_column, column_name, threshold=
         return False, df
     
 def getCount():
-    for name in names: 
-        path = "./imgs/" + names[name]
+    for name in config.names:
+        path = "./imgs/" + config.names[name]
         files = os.listdir(path)
         fileNum = len(files)
-        counts[name] = fileNum
+        config.counts[name] = fileNum
 
 def getTitle(img=None):
+    global closeName
     input_string = ''
-    if img == None:
-        path = "./imgs/{0}/{1}.jpg".format("temp", counts["temp"]+1)
-        x1, y1, x2, y2 = locationCalculate(location["screen"]["size"][0], location['screen']['size'][1], "screen","title")
+    if img is None:
+        path = "./imgs/{0}/{1}.jpg".format("temp", config.counts["temp"]+1)
+        x1, y1, x2, y2 = locationCalculate(config.location["screen"]["size"][0], config.location['screen']['size'][1], "screen","title")
         # print("title ",x1, y1, x2, y2)
         # exit()
         pi.screenshot(imageFilename=path, region=(x1, y1, x2-x1, y2-y1))
@@ -164,14 +170,14 @@ def getTitle(img=None):
         input_string = getString(path)
     else:
         input_string = getString(img)
-    closest_match = pr.extractOne(input_string, names.keys())
+    closest_match = pr.extractOne(input_string, config.names.keys())
     if closest_match:
         closeName = closest_match[0]
     else:
         print("No match found.")
     return closeName
 
-def readExcel(path=ACHIEVEMENTS_FILE):
+def readExcel(path=config.ACHIEVEMENTS_FILE):
     # 读取 Excel 文件
     xlsx_file = pd.ExcelFile(path)
     dfs = {}
@@ -192,6 +198,14 @@ def saveToExcel(dfs):
         df.to_excel(writer, sheet_name=key, startrow=len(data['pair'])+2, index=False)
 
     writer._save()
+
+def interruptHandler():
+    if config.main_stop_flag:
+        messagebox.showerror(title="错误", message="键盘输入强制停止标识，脚本运行停止")
+        print("键盘输入强制停止标识，脚本运行停止......")
+        exit()
+    else:
+        pass
 
 if __name__ == "__main__":
     data = {

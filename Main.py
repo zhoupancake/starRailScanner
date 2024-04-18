@@ -1,16 +1,19 @@
 import os
 
 from checkPoints import checkPoint, screenConfig
-from config import *
+import config
 from operation import *
 from process import *
+from KeyboardListener import Listener
 
 import sys
 import pyautogui as pi
 # import pygetwindow as pw
+import threading
 import time
 from tkinter import messagebox
 import shutil
+
 
 
 # def readOneAchievementSet(title):
@@ -47,14 +50,11 @@ import shutil
 #     # return title
 
 def readOneAchievementSet(dfs, title):
+    interruptHandler()
     unmatchedList, df = process(title, dfs[title])
     return {'title': title, 'pair': df, "notPair": unmatchedList}
 
-if __name__ == "__main__":
-    # checking the basic setting of the python environment and screen
-    if not checkPoint() or not screenConfig():
-        exit()
-    
+def main():
     # activate the windows and get the properties
     activateWindows("崩坏：星穹铁道")
     # activate_window = pw.getWindowsWithTitle("崩坏：星穹铁道")[0]
@@ -68,7 +68,7 @@ if __name__ == "__main__":
         setName = sys.argv[1]
         if len(sys.argv) > 2:
             update_way = sys.argv[2]
-    if setName not in names.keys():
+    if setName not in config.names.keys():
         setName = ''
     readSet = []
     # choose the center set to read
@@ -76,7 +76,9 @@ if __name__ == "__main__":
     pi.click()
 
     achievementList = {}
-    while readSet.__len__() < names.keys().__len__():
+    while readSet.__len__() < config.names.keys().__len__() :
+        interruptHandler()
+
         time.sleep(1)
         title = getTitle()
         print("正在读取：", title)
@@ -89,11 +91,12 @@ if __name__ == "__main__":
         if title in readSet:
             saveToExcel(achievementList)
             if not save_img:
-                for key in names:
-                    shutil.rmtree(names[key])
-                    os.mkdir(names[key])
+                for key in config.names:
+                    shutil.rmtree(config.names[key])
+                    os.mkdir(config.names[key])
             messagebox.showinfo(title="提示", message="已完成所有成就的读取")
-            exit()
+            config.listener_stop_flag = True
+            return
         else:
             # data = readOneAchievementSet(title)
             # achievementList[title] = [data['pair'], data['unfinished'], data['notPair']]
@@ -102,19 +105,44 @@ if __name__ == "__main__":
             achievementList[title] = data
             if setName != '' and (update_way == 'u' or update_way == ''):
                 for key in dfs:
+                    interruptHandler()
+
                     if key != title:
                         notProcess_df = {'title': key, 'pair': dfs[key], "notPair": None}
                         achievementList[key] = notProcess_df
             readSet.append(title)
             if setName != '':
                 saveToExcel(achievementList)
-                if not save_img:
+                if not config.save_img:
                     os.chdir(r"./imgs")
-                    for key in names:
+                    for key in config.names:
                         # print(os.getcwd())
-                        shutil.rmtree(names[key])
-                        os.mkdir(names[key])
+                        shutil.rmtree(config.names[key])
+                        os.mkdir(config.names[key])
                 messagebox.showinfo(title="提示", message="已完成所有成就的读取")
-                exit()
+                config.listener_stop_flag = True
+                return
             exitSpecialAchievementSet()
             changeAchievementSet()
+
+
+
+
+
+
+if __name__ == "__main__":
+    # checking the basic setting of the python environment and screen
+    if not checkPoint() or not screenConfig():
+        exit()
+
+    config.listener_stop_flag = False
+    config.main_stop_flag = False
+    main_thread = threading.Thread(target=main)
+    listener_thread = threading.Thread(target=Listener)
+    listener_thread.start()
+    main_thread.start()
+
+    main_thread.join()
+    listener_thread.join()
+
+    # main()

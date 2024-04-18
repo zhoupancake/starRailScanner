@@ -1,8 +1,9 @@
 import pyautogui as pi
 import pygetwindow as gw
 import math
+import time
+import config
 
-from config import *
 
 def activateWindows(title_name):
     try:
@@ -17,38 +18,48 @@ def activateWindows(title_name):
         print("成功打开")
 
 def screenshot(kind):
-    path = "./imgs/{0}/{1}.jpg".format(names[kind], counts[kind]+1)
-    x1, y1, x2, y2 = locationCalculate(location["screen"]["size"][0], location['screen']['size'][1], "screen", "screen")
+    path = "./imgs/{0}/{1}.jpg".format(config.names[kind], config.counts[kind]+1)
+    x1, y1, x2, y2 = locationCalculate(config.location["screen"]["size"][0], config.location['screen']['size'][1], "screen", "screen")
     pi.screenshot(imageFilename=path, region=(x1, y1, x2-x1, y2-y1))
     # pi.screenshot(imageFilename=path,region=[179, 177, 2315, 1317])
-    counts[kind] = counts[kind] + 1
+    config.counts[kind] = config.counts[kind] + 1
     return path
 
 def moveMouseToCenter(duration = 0.1):
     x , y = pi.size()
     pi.moveTo(x/2, y/2, duration) 
 
-def scroll(len, scrollTime=SCROLL_VALUE):
-    for i in range(math.floor(scrollTime + len*0.05)):
-        pi.scroll(-95)
+def scroll(type=1):
+    # provide two types of the scroll: scroll the achievements list or change the achievements set
+    # type is decided based on the passed parameter
+    print("scroll", config.location['scroll'][f"type{type}_time"], config.location['scroll'][f"type{type}_length"])
+    for i in range(config.location['scroll'][f"type{type}_time"]):
+        pi.scroll(config.location['scroll'][f"type{type}_length"])
+    time.sleep(0.3)
+
     # print("滚动切换成功")
 
 def changeAchievementSet():
     x , y = pi.size()
-    pi.moveTo(x/4, y/4, 1.0) 
+    pi.moveTo(x/4, y/4, 0.1)
     pi.click()
     moveMouseToCenter()
-    scroll(0,5)
+    scroll(2)
     pi.click()
 
 def exitSpecialAchievementSet():
     x , y = pi.size()
-    pi.moveTo(x*location["exit"][0]/100, y*location["exit"][1]/100, 1.0)
+    pi.moveTo(x*config.location["exit"][0]/100, y*config.location["exit"][1]/100, 0.1)
     pi.click()
 
 def locationCalculate(w, h, kind, type):
-    x1 = math.ceil(location[kind][type][0][0]*w/100)
-    y1 = math.ceil(location[kind][type][0][1]*h/100)
-    x2 = math.ceil(location[kind][type][1][0]*w/100)
-    y2 = math.ceil(location[kind][type][1][1]*h/100)
+    x1 = math.ceil(config.location[kind][type][0][0]*w/100)
+    y1 = math.ceil(config.location[kind][type][0][1]*h/100)
+    x2 = math.ceil(config.location[kind][type][1][0]*w/100)
+    y2 = math.ceil(config.location[kind][type][1][1]*h/100)
     return x1, y1, x2, y2
+
+if __name__ == '__main__':
+    activateWindows("崩坏：星穹铁道")
+    time.sleep(1)
+    pi.scroll(-20000)

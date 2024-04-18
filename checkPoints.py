@@ -1,5 +1,8 @@
+import os
 import importlib
 import pyautogui as pi
+
+import config
 
 def check_package_installed(package_name):
     try:
@@ -11,7 +14,7 @@ def check_package_installed(package_name):
 
 
 def checkPoint():
-    package_name = ["numpy", "cv2", "PIL", "pyautogui", "pygetwindow", "math", "pytesseract", "pandas"]
+    package_name = ["fuzzywuzzy", "numpy", "cv2", "pandas", "pyautogui", "pygetwindow", "pytesseract"]
     checkPass = True
     
     for name in package_name:
@@ -21,12 +24,24 @@ def checkPoint():
     
     return checkPass
 
+def checkStructure():
+    path = "./imgs"
+    if not os.path.exists(path):
+        os.makedirs(path)
+        os.chdir(path)
+        for value in config.names.values:
+            os.makedirs(path+"/"+value)
+        os.chdir("..")
+
 
 def screenConfig():
     pi.PAUSE = 0.1
     pi.FAILSAFE = False
     screenSize = pi.size()
-    if screenSize.height == 1600 and screenSize.width == 2560:
+    # if screenSize.height == 1600 and screenSize.width == 2560:
+    screenSize_str = str(screenSize.width) + "*" + str(screenSize.height)
+    if screenSize_str in config.location_list.keys():
+        config.location = config.location_list[screenSize_str]
         print("分辨率检测通过")
         return True
     else:
