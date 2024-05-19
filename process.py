@@ -11,9 +11,9 @@ from ocr import getString
 from operation import screenshot, moveMouseToCenter, scroll, locationCalculate
 from selector import select
 
-
-
 data = {}
+
+
 def characterSegment(path=None, img=None):
     if img is None and path is not None:
         img = cv.imread(path)
@@ -21,26 +21,27 @@ def characterSegment(path=None, img=None):
         print("ilegal parameters passed.")
     elif img is not None and path is not None:
         img = cv.imread(path)
-    
-    strs = {"name":"", "description":"", "detail":"", "finish":"", "date":"", "notAccept":"", "notFinish":""}
-    keys = {"description":["name", "description", "detail"], "finish":["finish", "date", "notAccept", "notFinish"]}
+
+    strs = {"name": "", "description": "", "detail": "", "finish": "", "date": "", "notAccept": "", "notFinish": ""}
+    keys = {"description": ["name", "description", "detail"], "finish": ["finish", "date", "notAccept", "notFinish"]}
     for key in keys.keys():
         for value in keys[key]:
             x1, y1, x2, y2 = locationCalculate(img.shape[1], img.shape[0], key, value)
             temp = img[y1:y2, x1:x2]
             # if value == "finish" or value == "notAccept" or value == "notFinish":
-                # random_integer = random.randint(1, 10000000)
-                # cv.imwrite(f"{value}{random_integer}.png", temp)
+            # random_integer = random.randint(1, 10000000)
+            # cv.imwrite(f"{value}{random_integer}.png", temp)
             strs[value] = getString(path=None, img=temp)
     # return strs["name"], strs["description"], strs["detail"], strs["finish"], strs["date"], strs["notAccept"], strs["notFinish"]
     return strs["name"]
+
 
 # def process(title):
 #     if title not in data:
 #         column_names = ['name', 'description', 'detail', 'finish', 'date', 'notAccept', 'notFinish']
 #         df = pd.DataFrame(columns=column_names)
 #         data[title] = df 
-    
+
 #     while True:
 #         finishScreenshot = False
 #         moveMouseToCenter()
@@ -72,7 +73,7 @@ def characterSegment(path=None, img=None):
 #         moveMouseToCenter()
 #         pi.click()
 #         scroll(data.__len__())
-    
+
 #     return data
 
 def process(title, df):
@@ -116,6 +117,7 @@ def process(title, df):
         scroll(1)
     return unmatchedList, df
 
+
 # def fuzzy_merge(df1, df2, left_on, right_on, threshold=60):
 #     merged_df1 = []
 #     unmatched_df1 = []
@@ -149,23 +151,37 @@ def fuzzy_merge_custom(df, target_string, modify_column, column_name, threshold=
         return True, df
     else:
         return False, df
-    
+
+
 def getCount():
-    for name in config.names:
-        path = "./imgs/" + config.names[name]
-        files = os.listdir(path)
-        fileNum = len(files)
-        config.counts[name] = fileNum
+    if not os.path.exists(".\\imgs"):
+        current_directory = os.path.dirname(__file__)
+        imgs_path = os.path.join(current_directory, "imgs\\")
+        os.mkdirs(imgs_path)
+        for name in config.names:
+            relative_folder_path = "\\imgs\\" + config.names[name]
+            absolute_folder_path = os.path.join(current_directory, relative_folder_path)
+            os.mkdirs(absolute_folder_path)
+            config.counts[name] = 0
+        return
+    else:
+        for name in config.names:
+            path = "./imgs/" + config.names[name]
+            files = os.listdir(path)
+            fileNum = len(files)
+            config.counts[name] = fileNum
+
 
 def getTitle(img=None):
     global closeName
     input_string = ''
     if img is None:
-        path = "./imgs/{0}/{1}.jpg".format("temp", config.counts["temp"]+1)
-        x1, y1, x2, y2 = locationCalculate(config.location["screen"]["size"][0], config.location['screen']['size'][1], "screen","title")
+        path = "./imgs/{0}/{1}.jpg".format("temp", config.counts["temp"] + 1)
+        x1, y1, x2, y2 = locationCalculate(config.location["screen"]["size"][0], config.location['screen']['size'][1],
+                                           "screen", "title")
         # print("title ",x1, y1, x2, y2)
         # exit()
-        pi.screenshot(imageFilename=path, region=(x1, y1, x2-x1, y2-y1))
+        pi.screenshot(imageFilename=path, region=(x1, y1, x2 - x1, y2 - y1))
         # pi.screenshot(imageFilename=path, region=(198,180,307,48))
         input_string = getString(path)
     else:
@@ -176,6 +192,7 @@ def getTitle(img=None):
     else:
         print("No match found.")
     return closeName
+
 
 def readExcel(path=config.ACHIEVEMENTS_FILE):
     # 读取 Excel 文件
@@ -188,6 +205,7 @@ def readExcel(path=config.ACHIEVEMENTS_FILE):
     # del dfs['总目录']
     return dfs
 
+
 def saveToExcel(dfs):
     writer = pd.ExcelWriter('achievements.xlsx', engine='xlsxwriter')
 
@@ -195,9 +213,10 @@ def saveToExcel(dfs):
         data = dfs[key]
         data['pair'].to_excel(writer, sheet_name=key, startrow=0, index=False)
         df = pd.DataFrame(data['notPair'], columns=['未匹配成就'])
-        df.to_excel(writer, sheet_name=key, startrow=len(data['pair'])+2, index=False)
+        df.to_excel(writer, sheet_name=key, startrow=len(data['pair']) + 2, index=False)
 
     writer._save()
+
 
 def interruptHandler():
     if config.main_stop_flag:
@@ -207,10 +226,12 @@ def interruptHandler():
     else:
         pass
 
+
 if __name__ == "__main__":
     data = {
         "版本": [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-        "分类": ["众秘探奇", "众秘探奇", "众秘探奇", "众秘探奇", "众秘探奇", "众秘探奇", "众秘探奇", "众秘探奇", "众秘探奇", "众秘探奇", "众秘探奇", "众秘探奇"],
+        "分类": ["众秘探奇", "众秘探奇", "众秘探奇", "众秘探奇", "众秘探奇", "众秘探奇", "众秘探奇", "众秘探奇",
+                 "众秘探奇", "众秘探奇", "众秘探奇", "众秘探奇"],
         "名称": [
             "直到光芒把我们带走",
             "不开放世界",
@@ -241,7 +262,8 @@ if __name__ == "__main__":
         ],
         "星琼": [5, 5, 5, 5, 20, 20, 5, 10, 5, 10, 5, 5],
         "备注": ["无", "无", "无", "无", "无", "无", "无", "无", "无", "无", "无", "无"],
-        "完成情况": ["未完成", "未完成", "未完成", "未完成", "未完成", "未完成", "未完成", "未完成", "未完成", "未完成", "未完成", "未完成"]
+        "完成情况": ["未完成", "未完成", "未完成", "未完成", "未完成", "未完成", "未完成", "未完成", "未完成", "未完成",
+                     "未完成", "未完成"]
     }
 
     df = pd.DataFrame(data)
@@ -254,7 +276,3 @@ if __name__ == "__main__":
     # 返回修改的成功情况以及dataframe
     success_message = f"成功将行“{matches}”的“完成情况”一列修改为“已完成”。"
     print(df)
-            
-        
-
-            

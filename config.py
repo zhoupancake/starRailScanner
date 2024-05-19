@@ -1,22 +1,22 @@
 # this file is used for setting the configuration of the project
 save_img = True                                        # whether to save the screenshots in the directory
-ACHIEVEMENTS_FILE = "./2.1.xlsx"                        # the path of the achievements
-counts = {}                                             # the numbers of the screenshots in the corresponding sets, use for name the images
+ACHIEVEMENTS_FILE = "./2.2.xlsx"                        # the path of the achievements
+counts = {}                                             # the numbers of the screenshots in the corresponding sets, used for name the images
 TESSDATA_PREFIX = r'./tesseract/tessdata'               # the path of tesseract(pre-set in the project)
 TESSDATA_PATH = r'./tesseract/tesseract.exe'            # the path to executable application of tesseract
 global listener_stop_flag                               # called by the Main.py and KeyboardListener.py to stop the listener thread
 global main_stop_flag                                   # called by the Main.py and KeyboardListener.py to stop the main thread
 names = {
-    "temp":"temp",
-    "不屈者的荣光":"GloryOfTheUnyielding",
-    "与你同行的回忆":"TheMemoriesWeShare",
-    "众秘探奇":"FathomTheUnfathomable",
-    "我，开拓者":"Trailblazer",
-    "战意奔涌":"EagerForBattle",
-    "果壳中的宇宙":"UniverseInANutshell",
-    "流光遗痕":"VestigeOfLuminflux",
-    "瞬息欢愉":"MonmentOfJoy",
-    "通往群星的轨道":"TheRailUntoTheStar"
+    "temp": "temp",
+    "不屈者的荣光": "GloryOfTheUnyielding",
+    "与你同行的回忆": "TheMemoriesWeShare",
+    "众秘探奇": "FathomTheUnfathomable",
+    "我，开拓者": "Trailblazer",
+    "战意奔涌": "EagerForBattle",
+    "果壳中的宇宙": "UniverseInANutshell",
+    "流光遗痕": "VestigeOfLuminflux",
+    "瞬息欢愉": "MonmentOfJoy",
+    "通往群星的轨道": "TheRailUntoTheStar"
 }              # the name of different sets in the achievements
 
 global location
