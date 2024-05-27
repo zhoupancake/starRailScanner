@@ -24,17 +24,17 @@
 
 ## 适用范围
 
--[x] 2560\*1600 for Chinese
+- [x] 2560\*1600 for Chinese
 
--[x] 2560\*1600 for English
+- [x] 2560\*1600 for English
 
--[X] 1920\*1080 for Chinese
+- [x] 1920\*1080 for Chinese
 
--[X] 1920\*1080 for English
+- [ ] 1920\*1080 for English
 
--[ ] 3840\*2160 for Chinese
+- [ ] 3840\*2160 for Chinese
 
--[X] 3840\*2160 for English
+- [ ] 3840\*2160 for English
 
 由于笔者使用的PC设备的分辨率为2560\*1600，同时未对其余分辨率进行测试，故而当前该脚本可以适配的分辨率为2560\*1600，后续经过测试后将适配3840\*2160以及1920\*1080等PC端设备。
 
