@@ -39,7 +39,7 @@ def screenConfig():
     pi.FAILSAFE = False
     screenSize = pi.size()
     # if screenSize.height == 1600 and screenSize.width == 2560:
-    screenSize_str = str(screenSize.width) + "*" + str(screenSize.height)
+    screenSize_str = str(screenSize.width) + "*" + str(screenSize.height) + "_" + config.language
     if screenSize_str in config.location_list.keys():
         config.location = config.location_list[screenSize_str]
         print("分辨率检测通过")
