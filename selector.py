@@ -11,8 +11,7 @@ def angle_cos(p0, p1, p2):
     d1, d2 = (p0 - p1).astype('float'), (p2 - p1).astype('float')
     return abs(np.dot(d1, d2) / np.sqrt(np.dot(d1, d1) * np.dot(d2, d2)))
 
-
-def find_squares(img):
+def find_squares(img: cv.typing.MatLike):
     squares = []
     img = cv.GaussianBlur(img, (3, 3), 0)
     gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
@@ -21,7 +20,7 @@ def find_squares(img):
     # print("轮廓数量：%d" % len(contours))
     index = 0
 
-    result = []
+    result: list[cv.typing.MatLike] = []
     # 轮廓遍历
     for cnt in contours:
         cnt_len = cv.arcLength(cnt, True)  # 计算轮廓周长
@@ -54,7 +53,7 @@ def find_squares(img):
     return squares, result
 
 
-def select(path):
+def select(path: str):
     img = cv.imread(path)
     # print("read the path", path)
     # cv.waitKey(0)

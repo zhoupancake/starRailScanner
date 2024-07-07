@@ -17,7 +17,7 @@ from excelOperation import readExcel, saveToExcel
 data = {}
 
 
-def characterSegment(path=None, img=None):
+def characterSegment(*, path=None, img: cv.typing.MatLike):
     if img is None and path is not None:
         img = cv.imread(path)
     elif img is None and path is None:
@@ -36,12 +36,19 @@ def characterSegment(path=None, img=None):
             # cv.imwrite(f"{value}{random_integer}.png", temp)
             strs[value] = getString(path=None, img=temp)
     # return strs["name"], strs["description"], strs["detail"], strs["finish"], strs["date"], strs["notAccept"], strs["notFinish"]
-    return strs["name"]
+    if strs["finish"] == "已完成" or strs["finish"] == "completed":
+        finishQ = True
+    elif '/' in strs["notFinish"] or '/' in strs["notAccept"] or strs["notFinish"] == "进行中":
+        finishQ = False
+    else:
+        print(f"unrecognized finish status: {strs["name"]}")
+        finishQ = True
+    return strs["name"], finishQ
 
 
-def process(title, df):
+def process(title: str, df):
     unmatchedList = []
-    data = []
+    data: list[str] = []
 
     while True:
         interruptHandler()
@@ -49,12 +56,30 @@ def process(title, df):
         finishScreenshot = False
         moveMouseToCenter()
         pi.click()
+
+        # 截图
         path = screenshot(title)
         imgs = select(path)
-        for img in imgs:
+
+        # 读取成就并进行匹配
+        if len(imgs) < 5:
+            print(f"less than 5 images in the screenshot of path {path}")
+
+        for index, img in enumerate(imgs):
             interruptHandler()
 
-            name = characterSegment(path=None, img=img)
+            # 识别成就名称
+            for i in range(5):
+                name, finishQ = characterSegment(path=None, img=img)
+                if name != "":
+                    if i > 0:
+                        print(f"retry {i} times in #{5 - index} image")
+                    break
+
+            if name == "":
+                print(f"unrecognized name in #{5 - index} image of path {path}")
+                continue
+
             if name in data:
                 print("reading achievements finished")
                 finishScreenshot = True
@@ -63,9 +88,9 @@ def process(title, df):
             data.append(name)
             isMatch = True
             if config.language == 'ch':
-                isMatch, df = fuzzy_merge_custom(df, name, "完成情况", "名称")
+                isMatch, df = fuzzy_merge_custom(df, name, "完成情况", "名称", "已完成" if finishQ else "未完成")
             elif config.language == 'en':
-                isMatch, df = fuzzy_merge_custom(df, name, "completed", "name")
+                isMatch, df = fuzzy_merge_custom(df, name, "completed", "name", "completed" if finishQ else "not completed")
             if not isMatch:
                 unmatchedList.append(name)
 
@@ -77,8 +102,11 @@ def process(title, df):
     return unmatchedList, df
 
 
-def fuzzy_merge_custom(df, target_string, modify_column, column_name, threshold=60):
+def fuzzy_merge_custom(df, target_string: str, modify_column: str, column_name: str, fillstr: str, threshold=60):
     matches = pr.extractOne(target_string, df[column_name])
+    # 强制修改matches的类型标注为 tuple[str, int, int]
+    import typing
+    matches = typing.cast(tuple[str, int, int], matches)
     if matches[1] > threshold:
         best_match_row = df[df[column_name] == matches[0]]
         if config.language == 'ch':
@@ -94,22 +122,28 @@ def getCount():
     if not os.path.exists("./imgs"):
         current_directory = os.path.dirname(__file__)
         imgs_path = os.path.join(current_directory, "imgs/")
-        os.mkdirs(imgs_path)
+        os.makedirs(imgs_path)
         for name in config.names:
             relative_folder_path = "/imgs/" + config.names[name]
             absolute_folder_path = os.path.join(current_directory, relative_folder_path)
-            os.mkdirs(absolute_folder_path)
+            os.makedirs(absolute_folder_path)
             config.counts[name] = 0
         return
     else:
         for name in config.names:
             path = "./imgs/" + config.names[name]
-            files = os.listdir(path)
+            try:
+                # 如果不存在文件夹，创建文件夹
+                files = os.listdir(path)
+            except FileNotFoundError:
+                os.makedirs(path)
+                config.counts[name] = 0
+                continue
             fileNum = len(files)
             config.counts[name] = fileNum
 
 
-def getTitle(img=None):
+def getTitle(img=None) -> str:
     global closeName
     input_string = ''
     if img is None:

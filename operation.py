@@ -26,7 +26,7 @@ def activateWindows(title_name):
             print("detected target windows")
 
 
-def screenshot(kind):
+def screenshot(kind: str):
     path = "./imgs/{0}/{1}.jpg".format(config.names[kind], config.counts[kind] + 1)
     x1, y1, x2, y2 = locationCalculate(config.location["screen"]["size"][0], config.location['screen']['size'][1],
                                        "screen", "screen")
@@ -43,10 +43,32 @@ def moveMouseToCenter(duration=0.1):
 def scroll(type=1):
     # provide two types of the scroll: scroll the achievements list or change the achievements set
     # type is decided based on the passed parameter
-    print("scroll", config.location['scroll'][f"type{type}_time"], config.location['scroll'][f"type{type}_length"])
-    for i in range(config.location['scroll'][f"type{type}_time"]):
-        pi.scroll(config.location['scroll'][f"type{type}_length"])
-    time.sleep(0.3)
+    x, y = pi.size()
+    if type == 1 and x == 1920 and y == 1080:
+        # 只滑动
+        def move_curve(x: float) -> float:
+            """鼠标移动的曲线函数
+
+            前半段为正弦函数，后半段为常数
+            
+            Arguments:
+                x {float} -- 时间百分比
+
+            Returns:
+                float -- 坐标百分比
+            """
+            if x > 0.5:
+                return 1
+            else:
+                return math.sin(x * math.pi) ** 2
+        pi.moveTo(x / 2, config.location['swipe'][f"type{type}_start"], 0.5, tween=move_curve)
+        # 114 划少了 112 划多了
+        pi.dragTo(x / 2, config.location['swipe'][f"type{type}_end"], 2, tween=move_curve)
+    else:
+        print("scroll", config.location['scroll'][f"type{type}_time"], config.location['scroll'][f"type{type}_length"])
+        for i in range(config.location['scroll'][f"type{type}_time"]):
+            pi.scroll(config.location['scroll'][f"type{type}_length"])
+        time.sleep(0.3)
 
 
 def changeAchievementSet():
