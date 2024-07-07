@@ -110,9 +110,13 @@ location_list = {
             "title": [[7, 11], [21, 16]],
             "screen": [[6, 11], [98, 98]]
         },
+		"swipe": {
+			"type1_start": 900,
+			"type1_end": 113,
+        },
         "scroll": {
             "type1_time": 26,
-            "type1_length": -95,
+            "type1_length": -1,
             "type2_time": 7,
             "type2_length": -100
         },

@@ -33,7 +33,7 @@ def saveToExcel(dfs):
     if not os.path.exists("./achievements"):
         current_directory = os.path.dirname(__file__)
         imgs_path = os.path.join(current_directory, "achievements/")
-        os.mkdirs(imgs_path)
+        os.makedirs(imgs_path)
     writer = pd.ExcelWriter('achievements/achievements_'+config.language+'.xlsx', engine='xlsxwriter')
 
     for key in dfs:
