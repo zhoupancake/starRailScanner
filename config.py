@@ -1,7 +1,7 @@
 # this file is used for setting the configuration of the project
 language = "ch"                                                             # the language used when scan the achievement
 save_img = True                                                             # whether to save the screenshots in the directory
-ACHIEVEMENTS_FILE = "./achievementSet_full/2.2_" + language + ".xlsx"       # the path of the achievements
+ACHIEVEMENTS_FILE = "./achievementSet_full/2.4_" + language + ".xlsx"       # the path of the achievements
 counts = {}                                                                 # the numbers of the screenshots in the corresponding sets, used for name the images
 TESSDATA_PREFIX = r'./tesseract/tessdata'                                   # the path of tesseract(pre-set in the project)
 TESSDATA_PATH = r'./tesseract/tesseract.exe'                                # the path to executable application of tesseract
