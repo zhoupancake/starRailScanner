@@ -8,8 +8,8 @@ import config
 
 def activateWindows(title_name):
     try:
-        window = gw.getWindowsWithTitle(title_name)[0]
-        window.activate()
+        window = gw.getWindowsWithTitle(title_name)
+        window[0].activate()
     except BaseException:
         if config.language == 'ch':
             print("未检测到", title_name, "请打开后重试")
@@ -19,11 +19,13 @@ def activateWindows(title_name):
             print("opening windows: ")
         for window in gw.getWindowsWithTitle(''):
             print(window.title)
+        return False
     else:
         if config.language == 'ch':
             print("检测到目标窗口")
         elif config.language == 'en':
             print("detected target windows")
+        return True
 
 
 def screenshot(kind):

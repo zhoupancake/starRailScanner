@@ -94,19 +94,23 @@ def getCount():
     if not os.path.exists("./imgs"):
         current_directory = os.path.dirname(__file__)
         imgs_path = os.path.join(current_directory, "imgs/")
-        os.mkdirs(imgs_path)
+        os.makedirs(imgs_path)
         for name in config.names:
             relative_folder_path = "/imgs/" + config.names[name]
             absolute_folder_path = os.path.join(current_directory, relative_folder_path)
-            os.mkdirs(absolute_folder_path)
+            os.makedirs(absolute_folder_path)
             config.counts[name] = 0
         return
     else:
         for name in config.names:
             path = "./imgs/" + config.names[name]
+            if not os.path.exists(path):
+                os.mkdir(path)
+                config.counts[name] = 0
             files = os.listdir(path)
             fileNum = len(files)
             config.counts[name] = fileNum
+        return
 
 
 def getTitle(img=None):

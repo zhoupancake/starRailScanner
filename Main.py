@@ -23,7 +23,12 @@ def readOneAchievementSet(dfs, title):
 def main():
     # activate the windows and get the properties
     window_name = "崩坏：星穹铁道" if config.language == 'ch' else 'Honkai: Star Rail'
-    activateWindows(window_name)
+    if not activateWindows(window_name):
+        if config.language == 'ch':
+            print("窗口激活失败，强制退出")
+        elif config.language == 'en':
+            print("Fail to activate windows.")
+        os._exit()
     getCount()
 
     setName = ''
