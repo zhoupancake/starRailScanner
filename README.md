@@ -239,14 +239,14 @@ python crawl.py
 
 在最新的版本的脚本中已经实现了对于误操作进行强制终止的外部介入。在发现脚本操作进入死循环后可以使用ctrl+C强制停止脚本的运行。由于该项操作主要基于对键盘的监听在循环操作中引入中断符，故而在按下ctrl+C后可能存在1-2秒的延迟，在成功终止脚本运行后将会出现以下的提示框。运行被强行终止后最新读取的数据将不会被存储到achievement.xlsx中。
 
-![interuptDemo](./docs/interuptDemo.png)
+![interuptDemo](./docs/interuptDemo_ch.png)
 
 
 ### 运行结果
 
 脚本运行结束将产生下图中的提示：
 
-![finishDemo](docs/finishDemo.png)
+![finishDemo](docs/finishDemo_ch.png)
 
 脚本运行将生成对应的截图（若将参数save_img设置为Ture）与achievements.xlsx文件。
 
@@ -264,7 +264,7 @@ python crawl.py
 
 下面为achievements.xlsx的部分截图：
 
-![achievementsListDemo](./docs/achievementsListDemo.png)
+![achievementsListDemo](./docs/achievementsListDemo_ch.png)
 
 ## 常见问题&问题反馈
 

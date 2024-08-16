@@ -66,7 +66,6 @@ def process(title, df):
             if finish:
                 if config.language == 'ch':
                     isMatch, df = fuzzy_merge_custom(df, name,"完成情况", "名称")
-                    print(df)
                 elif config.language == 'en':
                     isMatch, df = fuzzy_merge_custom(df, name, "completed", "name")
             if not isMatch:
@@ -82,7 +81,6 @@ def process(title, df):
 
 def fuzzy_merge_custom(df, target_string, modify_column, column_name, threshold=75):
     matches = pr.extractOne(target_string, df[column_name])
-    print(target_string, matches[1])
     if matches[1] > threshold:
         best_match_row = df[df[column_name] == matches[0]]
         if config.language == 'ch':

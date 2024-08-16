@@ -39,7 +39,11 @@ def saveToExcel(dfs):
     for key in dfs:
         data = dfs[key]
         data['pair'].to_excel(writer, sheet_name=key, startrow=0, index=False)
-        df = pd.DataFrame(data['notPair'], columns=['未匹配成就'])
+        df = pd.DataFrame()
+        if config.language == 'ch':
+            df = pd.DataFrame(data['notPair'], columns=['未匹配成就'])
+        elif config.language == 'en':
+            df = pd.DataFrame(data['notPair'], columns=['Unmatched Achievements'])
         df.to_excel(writer, sheet_name=key, startrow=len(data['pair']) + 2, index=False)
 
     writer._save()
