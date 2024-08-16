@@ -6,7 +6,8 @@
   - Updated the achievement set crawler. Currently supports crawling in Chinese, English and Japanese.
   - Updated the README documentation framework and added the crawler usage introduction.
   - Fixed the bug of matching immediately upon completion, improving recognition accuracy.
-
+  - Create the README file in English.
+  
 - 2024-08-15
   - Fixed the function and error judgment when creating file directories.
 
