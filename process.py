@@ -32,11 +32,11 @@ def characterSegment(path=None, img=None):
             x1, y1, x2, y2 = locationCalculate(img.shape[1], img.shape[0], key, value)
             temp = img[y1:y2, x1:x2]
             # if value == "finish" or value == "notAccept" or value == "notFinish":
-            # random_integer = random.randint(1, 10000000)
-            # cv.imwrite(f"{value}{random_integer}.png", temp)
+            #     random_integer = random.randint(1, 10000000)
+            #     cv.imwrite(f"{value}{random_integer}.png", temp)
             strs[value] = getString(path=None, img=temp)
     # return strs["name"], strs["description"], strs["detail"], strs["finish"], strs["date"], strs["notAccept"], strs["notFinish"]
-    return strs["name"]
+    return strs["name"], strs["finish"]
 
 
 def process(title, df):
@@ -54,7 +54,8 @@ def process(title, df):
         for img in imgs:
             interruptHandler()
 
-            name = characterSegment(path=None, img=img)
+            name, finish = characterSegment(path=None, img=img)
+            finish = finish == "已完成" or finish == "Completed" or finish == "完了"
             if name in data:
                 print("reading achievements finished")
                 finishScreenshot = True
@@ -62,10 +63,12 @@ def process(title, df):
 
             data.append(name)
             isMatch = True
-            if config.language == 'ch':
-                isMatch, df = fuzzy_merge_custom(df, name, "完成情况", "名称")
-            elif config.language == 'en':
-                isMatch, df = fuzzy_merge_custom(df, name, "completed", "name")
+            if finish:
+                if config.language == 'ch':
+                    isMatch, df = fuzzy_merge_custom(df, name,"完成情况", "名称")
+                    print(df)
+                elif config.language == 'en':
+                    isMatch, df = fuzzy_merge_custom(df, name, "completed", "name")
             if not isMatch:
                 unmatchedList.append(name)
 
@@ -77,8 +80,9 @@ def process(title, df):
     return unmatchedList, df
 
 
-def fuzzy_merge_custom(df, target_string, modify_column, column_name, threshold=60):
+def fuzzy_merge_custom(df, target_string, modify_column, column_name, threshold=75):
     matches = pr.extractOne(target_string, df[column_name])
+    print(target_string, matches[1])
     if matches[1] > threshold:
         best_match_row = df[df[column_name] == matches[0]]
         if config.language == 'ch':

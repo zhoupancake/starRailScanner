@@ -1,5 +1,5 @@
 # this file is used for setting the configuration of the project
-language = "ch"                                                             # the language used when scan the achievement
+language = "ch"                                                             # the language used when scan the achievement(ch for Chinese, en for English, ja for Japanese and ko for Korean)
 save_img = True                                                             # whether to save the screenshots in the directory
 ACHIEVEMENTS_FILE = "./achievementSet_full/2.4_" + language + ".xlsx"       # the path of the achievements
 counts = {}                                                                 # the numbers of the screenshots in the corresponding sets, used for name the images
